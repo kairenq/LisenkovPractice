@@ -1,0 +1,37 @@
+name: Build App
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --workspaces --include=dev
+
+      - name: Lint
+        run: npm run lint -w @app/desktop
+
+      - name: Test
+        run: npm run test -w @app/desktop
+
+      - name: Build app
+        run: npm run build -w @app/desktop
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: material-tracker-web
+          path: apps/desktop/dist/renderer/*
