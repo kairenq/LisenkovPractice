@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type Session = { token: string; user: { login: string; role: string } };
 type Material = { id: number; name: string; unit: string; category?: string; minStock: number };
@@ -141,14 +141,14 @@ function Materials({ token, onChange }: { token: string; onChange: () => void })
   const [sort, setSort] = useState<'name' | 'category' | 'unit' | 'min_stock'>('name');
   const [form, setForm] = useState<any>({ name: '', unit: 'шт', category: '', minStock: 0 });
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const rows = await window.api.listMaterials(token, { search, category, sort, dir: 'asc' });
     setItems(rows);
-  };
+  }, [token, search, category, sort]);
 
   useEffect(() => {
     void load();
-  }, [token, search, category, sort]);
+  }, [load]);
 
   const categories = Array.from(new Set(items.map((x) => x.category).filter(Boolean)));
 
@@ -343,8 +343,10 @@ function Users({ token }: { token: string }) {
   const [msg, setMsg] = useState('');
   const [form, setForm] = useState<any>({ login: '', role: 'storekeeper', isActive: true, password: '123456' });
 
-  const load = async () => setUsers(await window.api.listUsers(token));
-  useEffect(() => { void load(); }, [token]);
+  const load = useCallback(async () => setUsers(await window.api.listUsers(token)), [token]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   return (
     <section>
