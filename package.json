@@ -1,0 +1,16 @@
+{
+  "name": "lisenkov-practice",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @app/desktop",
+    "dev": "npm run dev -w @app/desktop",
+    "lint": "npm run lint -w @app/desktop",
+    "test": "npm run test -w @app/desktop",
+    "doctor:npm": "node scripts/check-npm-access.mjs"
+  }
+}
